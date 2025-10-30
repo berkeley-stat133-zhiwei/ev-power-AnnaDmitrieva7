@@ -8,27 +8,62 @@ format: typst
 ## **Part 0: libraries**
 
 ```{r}
-
+#install.packages("sf")
+library(sf)
+#install.packages("rnaturalearth")
+library(rnaturalearth)
+library(dplyr)
+library(ggplot2)
+library(stringr)
 ```
 
 ## **Part 1:** **Defining Research Question**
 
-Chosen Question:
+Chosen Question: Are EV registrations concentrated in states with cleaner energy mixes?
+Brainstorming:
+- I will probably want to get ratios of renewable energy use out of total energy use per state.
+- Can then look at # of EV registration by state, see if it correlates to the ratio of renewable/total energy
+- I could make a correlation plot and fit a regression. Can also make two maps, coloring one map with ratio of renewable/total and other map with # EV registrations. --> see how similar these two maps look. 
 
 ## **Part 2: Data Preparation and Cleaning**
+data I'll need: 
+ev-registrations-by-state-2023.csv
+renew-use-2023.csv - actually maybe don't need since total-use includes it.
+total-use-2023.csv
 
 ```{r}
+renew_use_2023 <- read.csv("/Users/dmitrieva/Desktop/STAT133_fall2025/project4/ev-power-AnnaDmitrieva7/data/renew-use-2023.csv")
+head(renew_use_2023)
+
+total_use_2023 <- read.csv("/Users/dmitrieva/Desktop/STAT133_fall2025/project4/ev-power-AnnaDmitrieva7/data/total-use-2023.csv")
+
+ev_registrations_2023 <- read.csv("/Users/dmitrieva/Desktop/STAT133_fall2025/project4/ev-power-AnnaDmitrieva7/data/ev-registrations-by-state-2023.csv")
+
+ev_registrations_2023 <- rename(ev_registrations_2023, State = electric.vehicle.registrations_by_state..2023.) #Renaming first column
+ev_registrations_2023 <- rename(ev_registrations_2023, Ev_registrations = X) #Renaming second column
+ev_registrations_2023 <- ev_registrations_2023[-c(1,2), ] #Removing blank first row
+ev_registrations_2023$State <- state.abb[match(ev_registrations_2023$State, state.name)] #Converting state names to abbreviations to match total use file
+ev_registrations_2023 <- ev_registrations_2023 |>
+  mutate(Ev_registrations = str_remove_all(Ev_registrations, "[#~]"),
+         Ev_registrations = str_extract(Ev_registrations, "\\d+"),
+         Ev_registrations = as.numeric(Ev_registrations))
+
+head(ev_registrations_2023) #Looks good!
+ev_registrations_2023
+
+
 
 ```
 
 ## **Part 3: Joining / Pivoting Datasets for Analysis**
 
 ```{r}
-
+#I'll need to pivot total_use_2023 file
+#I want to first use pivot_longer to get states into one column and then pivot_wider to ensure I have one row per state.
 ```
 
 ## **Part 4: Mapping Visualization**
 
 ```{r}
-
+#I'm sorry I didn't get to this part :((
 ```
